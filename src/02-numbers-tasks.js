@@ -110,11 +110,9 @@ function getLinearEquationRoot(a, b) {
  *   (0,1) (1,2)     => 0
  */
 function getAngleBetweenVectors(x1, y1, x2, y2) {
-  const moduleX = Math.sqrt((x1 ** 2) + (x2 ** 2));
-  const moduleY = Math.sqrt((y1 ** 2) + (y2 ** 2));
-
-  // eslint-disable-next-line max-len
-  return (x1 * y1 + x2 * y2) / (moduleX * moduleY);
+  const xModule = Math.sqrt(x1 ** 2 + y1 ** 2);
+  const yModule = Math.sqrt(x2 ** 2 + y2 ** 2);
+  return Math.acos((x1 * x2 + y1 * y2) / (xModule * yModule));
 }
 
 /**
@@ -197,8 +195,7 @@ function roundToPowerOfTen(num, pow) {
     parseFloat([...newNum].reverse().reduce((acc, v) => acc + v, '')),
   ).toString();
 
-  // eslint-disable-next-line no-plusplus
-  for (let i = 0; i < pow; i++) {
+  for (let i = 0; i < pow; i += 1) {
     newNum += '0';
   }
 
