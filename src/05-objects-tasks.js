@@ -115,32 +115,53 @@ function fromJSON(proto, json) {
  */
 
 const cssSelectorBuilder = {
-  element(/* value */) {
-    throw new Error('Not implemented');
+  result: '',
+
+  createSelector(order, value, selector, extraSelector = '') {
+    if (this.order === order && ['', '#', '::'].includes(selector)) {
+      throw new Error('Element, id and pseudo-element should not occur more then one time inside the selector');
+    }
+    if (this.order > order) {
+      throw new Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element');
+    }
+
+    const newSelector = Object.create(cssSelectorBuilder);
+    newSelector.order = order;
+    newSelector.result = `${this.result}${selector}${value}${extraSelector}`;
+
+    return newSelector;
   },
 
-  id(/* value */) {
-    throw new Error('Not implemented');
+  element(value) {
+    return this.createSelector(1, value, '');
   },
 
-  class(/* value */) {
-    throw new Error('Not implemented');
+  id(value) {
+    return this.createSelector(2, value, '#');
   },
 
-  attr(/* value */) {
-    throw new Error('Not implemented');
+  class(value) {
+    return this.createSelector(3, value, '.');
   },
 
-  pseudoClass(/* value */) {
-    throw new Error('Not implemented');
+  attr(value) {
+    return this.createSelector(4, value, '[', ']');
   },
 
-  pseudoElement(/* value */) {
-    throw new Error('Not implemented');
+  pseudoClass(value) {
+    return this.createSelector(5, value, ':');
   },
 
-  combine(/* selector1, combinator, selector2 */) {
-    throw new Error('Not implemented');
+  pseudoElement(value) {
+    return this.createSelector(6, value, '::');
+  },
+
+  combine(selector1, combinator, selector2) {
+    return this.createSelector(0, ` ${combinator} `, selector1.stringify(), selector2.stringify());
+  },
+
+  stringify() {
+    return this.result;
   },
 };
 

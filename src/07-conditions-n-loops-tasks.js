@@ -385,8 +385,29 @@ function toNaryString(num, n) {
  *   ['/web/assets/style.css', '/.bin/mocha',  '/read.me'] => '/'
  *   ['/web/favicon.ico', '/web-scripts/dump', '/verbalizer/logs'] => '/'
  */
-function getCommonDirectoryPath(/* pathes */) {
-  throw new Error('Not implemented');
+
+function getCommonDirectoryPath(pathes) {
+  const pathesArr = pathes.map((path) => path.split('/'));
+  let result = '';
+  let index = 0;
+  let finished;
+
+  while (!finished) {
+    const offset = index;
+    const commonWords = new Set();
+    pathesArr.forEach((item) => commonWords.add(item[offset]));
+
+    if (commonWords.size !== 1) {
+      finished = true;
+    } else {
+      const value = [...commonWords][0];
+
+      result += (value === '' ? '/' : `${value}/`);
+      index += 1;
+    }
+  }
+
+  return result;
 }
 
 
@@ -446,10 +467,45 @@ function getMatrixProduct(m1, m2) {
  *    [    ,   ,    ]]
  *
  */
-function evaluateTicTacToePosition(/* position */) {
-  throw new Error('Not implemented');
-}
 
+function evaluateTicTacToePosition(position) {
+  const winCombinations = [
+    ['0.0', '0.1', '0.2'],
+    ['1.0', '1.1', '1.2'],
+    ['2.0', '2.1', '2.2'],
+    ['0.0', '1.0', '2.0'],
+    ['0.1', '1.1', '2.1'],
+    ['0.2', '1.2', '2.2'],
+    ['0.0', '1.1', '2.2'],
+    ['0.0', '1.0', '2.0'],
+    ['0.2', '1.1', '2.0'],
+  ];
+  const xPosition = [];
+  const oPosition = [];
+  let winner;
+
+  position.forEach((line, indexLine) => {
+    line.forEach((item, indexItem) => {
+      if (item === 'X') xPosition.push(`${indexLine}.${indexItem}`);
+      if (item === '0') oPosition.push(`${indexLine}.${indexItem}`);
+    });
+  });
+
+  for (let i = 0; i < winCombinations.length; i += 1) {
+    const item = winCombinations[i];
+    const condition = (a) => (a.includes(item[0]) && a.includes(item[1]) && a.includes(item[2]));
+    if (condition(xPosition)) {
+      winner = 'X';
+      break;
+    }
+    if (condition(oPosition)) {
+      winner = '0';
+      break;
+    }
+  }
+
+  return winner;
+}
 
 module.exports = {
   getFizzBuzz,
